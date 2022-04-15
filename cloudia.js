@@ -27,20 +27,25 @@ http.createServer(function (req, res) {
             var form = new formidable.IncomingForm();
             form.parse(req, function (err, fields, files) {
                 if(['jpeg','png','bmp','tiff'].includes(fields.to_format)){
-                    var path = files.imagefile.filepath;
-                    res.writeHead(200, {
-                        'Server':'Cloudia/1.0',
-                        'ContentType': 'application/octet-stream',
-                        'Content-Disposition':'attachment; filename='+
-                            files.imagefile.originalFilename+"."+fields.to_format
-                    });
-                    const buffer = fs.readFileSync(path);
+                    
+                    const buffer = fs.readFileSync(files.imagefile.filepath);
                     Jimp.read(buffer, function(err,image){
-                        image.getBuffer("image/"+fields.to_format,(err,resource)=>{
-                            console.log(resource);
-                            res.write(resource,'binary');
-                            return res.end(null,'binary');
-                        });
+                        if(err){
+                            res.writeHead(500, {'Content-Type': 'text/plain'});
+                            res.end(err.message);
+                        }else{
+                            image.getBuffer("image/"+fields.to_format,(err,resource)=>{
+                                console.log(resource);
+                                res.writeHead(200, {
+                                    'Server':'Cloudia/1.0',
+                                    'ContentType': 'application/octet-stream',
+                                    'Content-Disposition':'attachment; filename='+
+                                        files.imagefile.originalFilename+"."+fields.to_format
+                                });
+                                res.write(resource,'binary');
+                                return res.end(null,'binary');
+                            });
+                        }
                     });
                 } else {
                     res.writeHead(302,{
