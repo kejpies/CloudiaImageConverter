@@ -29,6 +29,7 @@ http.createServer(function (req, res) {
                 if(['jpeg','png','bmp','tiff'].includes(fields.to_format)){
                     var path = files.imagefile.filepath;
                     res.writeHead(200, {
+                        'Server':'Cloudia/1.0',
                         'ContentType': 'application/octet-stream',
                         'Content-Disposition':'attachment; filename='+
                             files.imagefile.originalFilename+"."+fields.to_format
@@ -55,12 +56,14 @@ http.createServer(function (req, res) {
             return res.end();
         }
     }
-    if(req.url=="/")
+    else if(req.url=="/")
+    {
         fs.readFile('index.html', function(err, data) {
             res.writeHead(200, {'Content-Type': 'text/html'});
             res.write(data);
             return res.end();
         });
+    }
     else{
         res.writeHead(404, {'Content-Type': 'text/html'});
         res.write('<h1>404 Not Found</h1>');
