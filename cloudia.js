@@ -59,13 +59,13 @@ http.createServer(function (req, res) {
     else if(req.url=="/")
     {
         fs.readFile('index.html', function(err, data) {
-            res.writeHead(200, {'Content-Type': 'text/html'});
+            res.writeHead(200, {'Server':'Cloudia/1.0', 'Content-Type': 'text/html'});
             res.write(data);
             return res.end();
         });
     }
     else{
-        res.writeHead(404, {'Content-Type': 'text/html'});
+        res.writeHead(404, {'Server':'Cloudia/1.0', 'Content-Type': 'text/html'});
         res.write('<h1>404 Not Found</h1>');
         return res.end();
     }
